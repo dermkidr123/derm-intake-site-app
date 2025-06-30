@@ -40,15 +40,18 @@
 document.getElementById('practiceForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const formData = Object.fromEntries(new FormData(e.target).entries());
-    const res = await fetch('/.netlify/functions/submit', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(formData)
-  });
-  document.getElementById('msg').textContent =
-    res.ok ? 'Thank you! Your info was saved.' : 'Error – please try again.';
-  if(res.ok) e.target.reset();
+ const res = await fetch('/.netlify/functions/submit', {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(formData)
 });
-</script>
-</body>
-</html>
+
+const result = await res.json();
+
+if (res.ok && result.status === 'success') {
+  document.getElementById('msg').textContent = 'Thank you! Your info was saved.';
+  e.target.reset();
+} else {
+  console.error("Submission error:", result);
+  document.getElementById('msg').textContent = 'Error – please try again.';
+}
