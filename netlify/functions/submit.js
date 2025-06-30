@@ -1,26 +1,26 @@
 // netlify/functions/submit.js
 
-exports.handler = async function(event, context) {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed',
-    };
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
+
+export default async (req, res) => {
+  if (req.method !== 'POST') return res.status(405).end();
+
+  console.log("🟢 Incoming data:", req.body);
+
+  const { data, error } = await supabase
+    .from('practices')
+    .insert([req.body]);
+
+  if (error) {
+    console.error("🔴 Supabase insert error:", error);
+    return res.status(500).json({ error });
   }
 
-  try {
-    const data = JSON.parse(event.body);
-    // Here you would save the data to a database or send an email, etc.
-    // For demo, just log and return success
-    console.log('Received form data:', data);
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Form submission received.' }),
-    };
-  } catch (err) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid request.' }),
-    };
-  }
+  console.log("✅ Data inserted:", data);
+  return res.status(200).json({ status: 'success' });
 };
