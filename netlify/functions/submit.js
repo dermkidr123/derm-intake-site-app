@@ -5,21 +5,41 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-export default async (req, res) => {
-  if (req.method !== 'POST') return res.status(405).end();
-
-  const body = await req.json(); // ✅ Convert ReadableStream into usable object
-  console.log("🟢 Incoming data:", body);
-
-  const { data, error } = await supabase
-    .from('practices')
-    .insert([body]);
-
-  if (error) {
-    console.error("🔴 Supabase insert error:", error);
-    return res.status(500).json({ error });
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: 'Method Not Allowed',
+    };
   }
 
-  console.log("✅ Data inserted:", data);
-  return res.status(200).json({ status: 'success' });
+  try {
+    const body = JSON.parse(event.body);
+    console.log("🟢 Incoming data:", body);
+
+    const { data, error } = await supabase
+      .from('practices')
+      .insert([body]);
+
+    if (error) {
+      console.error("🔴 Supabase insert error:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error }),
+      };
+    }
+
+    console.log("✅ Data inserted:", data);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ status: 'success' }),
+    };
+  } catch (err) {
+    console.error("🔴 Unexpected error:", err);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid request.' }),
+    };
+  }
 };
