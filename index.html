@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Derm Practice Intake</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 700px;
+      margin: auto;
+      padding: 24px;
+    }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 16px; padding: 10px 20px; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Dermatology Practice Information Form</h1>
+  <form id="practiceForm">
+    <label>Practice Name <input name="practice_name" required></label>
+    <label>Address <textarea name="address" required></textarea></label>
+    <label>Hours of Operation <textarea name="hours" required></textarea></label>
+    <label>Services Offered <textarea name="services" required></textarea></label>
+    <label>List of Doctors <textarea name="doctors" required></textarea></label>
+    <label>Contact Phone <input name="phone" required></label>
+    <label>Contact Email <input type="email" name="email" required></label>
+    <label>Website URL <input type="url" name="website"></label>
+    <label>Insurance Accepted <textarea name="insurance"></textarea></label>
+    <label>Specialties / Expertise <textarea name="specialties"></textarea></label>
+    <label>Referral Process <textarea name="referral"></textarea></label>
+    <label>Patient Resources <textarea name="resources"></textarea></label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="msg"></p>
+
+<script>
+document.getElementById('practiceForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(e.target).entries());
+  const res = await fetch('/api/submit', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(formData)
+  });
+  document.getElementById('msg').textContent =
+    res.ok ? 'Thank you! Your info was saved.' : 'Error – please try again.';
+  if(res.ok) e.target.reset();
+});
+</script>
+</body>
+</html>
