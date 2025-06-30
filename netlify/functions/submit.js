@@ -1,5 +1,3 @@
-// netlify/functions/submit.js
-
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -10,11 +8,12 @@ const supabase = createClient(
 export default async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
 
-  console.log("🟢 Incoming data:", req.body);
+  const body = await req.json(); // ✅ Convert ReadableStream into usable object
+  console.log("🟢 Incoming data:", body);
 
   const { data, error } = await supabase
     .from('practices')
-    .insert([req.body]);
+    .insert([body]);
 
   if (error) {
     console.error("🔴 Supabase insert error:", error);
