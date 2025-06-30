@@ -1,0 +1,23 @@
+{
+  "name": "derm-project-",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dermkidr123/derm-intake-site-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dermkidr123/derm-intake-site-app/issues"
+  },
+  "homepage": "https://github.com/dermkidr123/derm-intake-site-app#readme",
+  "description": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.2"
+  }
+}
